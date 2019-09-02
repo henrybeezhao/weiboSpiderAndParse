@@ -1,3 +1,5 @@
 .idea/
 weibo/
 wordfile/
+venv/
+__pycache__/

@@ -3,7 +3,6 @@
 
 """使用词云进行文字内容分析"""
 
-import sys
 import os
 from os import path
 
@@ -16,6 +15,7 @@ path_pref = path.dirname(__file__) if "__file__" in locals() else os.getcwd()
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 import DateUtil
+import FileUtil
 
 # 分析文字，生成对应的图片
 """
@@ -25,16 +25,17 @@ jpgName：图片名称，默认是时间
 """
 
 
-def createJpg(wordContentFileName, needCreateJpg=False, jpgName=""):
+def createJpg(uid, needCreateJpg=True, jpgName="分析词云"):
     # get data directory (using getcwd() is needed to support running example in generated IPython notebook)
-    d = path.dirname(__file__) if "__file__" in locals() else os.getcwd()
+    dpath = path.dirname(__file__) if "__file__" in locals() else os.getcwd()
 
     # Read the whole text.
-    text = open(path.join(d, 'wordfile/' + wordContentFileName), encoding="utf-8").read()
+    txtFilePath = FileUtil.getTxtFilePath(uid)
+    text = open(txtFilePath, encoding="utf-8").read()
     # print(text)
 
     # 设置字体，使其支持中文显示，需要提前下载对应的字体
-    font = r"D:\project_python\simfang.ttf"
+    font = dpath + "\simfang.ttf"
     # Generate a word cloud image
     wordcloud = WordCloud(collocations=False, font_path=font, width=1400, height=1400, margin=2).generate(text)
     if needCreateJpg:
@@ -43,8 +44,9 @@ def createJpg(wordContentFileName, needCreateJpg=False, jpgName=""):
             jpgName = "default_" + DateUtil.nowNoSplit()
         if not jpgName.endswith(".jpg"):
             jpgName = jpgName + ".jpg"
-        print("生成图片名："+jpgName)
-        wordcloud.to_file("wordfile/" + jpgName)
+        print("生成图片名：" + jpgName)
+        file_pref = txtFilePath[0:txtFilePath.rfind((os.sep))]
+        wordcloud.to_file(file_pref + jpgName)
 
     # Display the generated image:
     # the matplotlib way:
@@ -54,6 +56,6 @@ def createJpg(wordContentFileName, needCreateJpg=False, jpgName=""):
 
 
 if __name__ == "__main__":
-    wordContentFileName = "weibocontent.txt"
+    user_id = 1345566427  # 可以改成任意合法的用户id
     # 生成图片
-    createJpg(wordContentFileName, True, "佟丽娅")
+    createJpg(user_id)
